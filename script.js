@@ -94,16 +94,31 @@ function play() {
 }
 
 function playStart() {
-    if (inputs[0].value.trim() === '') {
-        warning.innerHTML = 'أدخل اسم <span>اللاعب الأول</span> !'
+    if (inputs[0].value.trim() !== inputs[0].value) {
+        inputs[0].value = inputs[0].value.trim();
+    }
+    if (inputs[1].value.trim() !== inputs[1].value) {
+        inputs[1].value = inputs[1].value.trim();
+    }
+    if (inputs[0].value === '') {
+        warning.innerHTML = '! أدخل اسم <span>اللاعب الأول</span>';
+        inputs[0].value = '';
         inputs[0].focus();
         inputs[0].style.borderColor = 'orangered';
         inputs[1].style.borderColor = 'gray';
-    } else if (inputs[1].value.trim() === '') {
-        warning.innerHTML = 'أدخل اسم <span>اللاعب الثاني</span> !'        
+    } else if (inputs[1].value === '') {
+        warning.innerHTML = '! أدخل اسم <span>اللاعب الثاني</span>';
+        inputs[1].value = ''; 
         inputs[1].focus();
         inputs[1].style.borderColor = 'orangered';
         inputs[0].style.borderColor = 'gray';
+    } else if (inputs[0].value.trim() === inputs[1].value.trim()) {
+        warning.innerHTML = '! اللاعبان لديهما <span>نفس الإسم</span>';
+        inputs[0].value = inputs[0].value.trim()     
+        inputs[1].value = inputs[1].value.trim()     
+        inputs[0].focus();
+        inputs[0].style.borderColor = 'orangered';
+        inputs[1].style.borderColor = 'orangered';
     } else {
         players.push(inputs[0].value);
         players.push(inputs[1].value);
