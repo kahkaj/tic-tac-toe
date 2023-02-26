@@ -19,12 +19,164 @@ let moves = [],
     step = [],
     players = [],
     points = [0, 0];
+let lines = [];
+
+function getVirginZones() {
+    // at first, all of zones are not clicked
+    // the zones are ordered by the number of possible connections that they have
+    let virginZones = [4,8,6,2,0,7,1,5,3];
+    let index;
+    for (let i = 0; i < moves.length; i++) {
+        index = virginZones.indexOf(moves[i]);
+        if (index > -1) {
+            virginZones.splice(index, 1);
+        }
+    }
+    return virginZones;
+}
 
 function reset() {
     for (let i = 0; i < zone.length; i++) {
         zone[i].classList.add('clicked');
     }
     player.style.display = 'none';
+}
+
+function rightDiagonalLine(arr) {
+    arr.push(board[0][2] + board[1][1] + board[2][0])
+}
+
+function leftDiagonalLine(arr) {
+    arr.push(board[0][0] + board[1][1] + board[2][2])
+}
+
+function horizontalLine(arr) {
+   for (let row = 0; row < 3; row++) {
+       arr.push(board[row].join(''));
+   }
+}
+
+function varticalLine(arr) {
+   for (let col = 0; col < 3; col++) {
+       arr.push(board[0][col] + board[1][col] + board[2][col])
+   }
+}
+
+function updateLinesSituation() {
+    lines = [];
+    rightDiagonalLine(lines);
+    leftDiagonalLine(lines);
+    horizontalLine(lines);
+    varticalLine(lines);
+}
+
+function lineToClick() {
+    updateLinesSituation();
+    for (let i = 0; i < lines.length; i++) {
+        if (lines[i] == 'OO') {
+            return i
+        }
+    }
+    for (let i = 0; i < lines.length; i++) {
+        if (lines[i] == 'XX') {
+            return i
+        }
+    }
+    for (let i = 0; i < lines.length; i++) {
+        if (lines[i] == 'O') {
+            return i
+        }
+    }
+    for (let i = 0; i < lines.length; i++) {
+        if (lines[i] == '') {
+            return i
+        }
+    }
+    for (let i = 0; i < lines.length; i++) {
+        if (lines[i] == 'X') {
+            return i
+        }
+    }
+    for (let i = 0; i < lines.length; i++) {
+        if (lines[i] == 'OX' || lines[i] == 'XO') {
+            return i
+        }
+    }
+}
+
+function zoneToClick(line) {
+    if (line == 0) {
+        if (!zone[4].classList.contains('clicked')) {
+            return zone[4];
+        } else if (!zone[6].classList.contains('clicked')) {
+            return zone[6];
+        } else if (!zone[2].classList.contains('clicked')) {
+            return zone[2];
+        }
+    }
+    if (line == 1) {
+        if (!zone[4].classList.contains('clicked')) {
+            return zone[4];
+        } else if (!zone[8].classList.contains('clicked')) {
+            return zone[8];
+        } else if (!zone[0].classList.contains('clicked')) {
+            return zone[0];
+        }
+    }
+    if (line == 2) {
+        if (!zone[2].classList.contains('clicked')) {
+            return zone[2];
+        } else if (!zone[0].classList.contains('clicked')) {
+            return zone[0];
+        } else if (!zone[1].classList.contains('clicked')) {
+            return zone[1];
+        }
+    }
+    if (line == 3) {
+        if (!zone[4].classList.contains('clicked')) {
+            return zone[4];
+        } else if (!zone[5].classList.contains('clicked')) {
+            return zone[5];
+        } else if (!zone[3].classList.contains('clicked')) {
+            return zone[3];
+        }
+    }
+    if (line == 4) {
+        if (!zone[8].classList.contains('clicked')) {
+            return zone[8];
+        } else if (!zone[6].classList.contains('clicked')) {
+            return zone[6];
+        } else if (!zone[7].classList.contains('clicked')) {
+            return zone[7];
+        }
+    }
+    if (line == 5) {
+        if (!zone[6].classList.contains('clicked')) {
+            return zone[6];
+        } else if (!zone[0].classList.contains('clicked')) {
+            return zone[0];
+        } else if (!zone[3].classList.contains('clicked')) {
+            return zone[3];
+        }
+    }
+    if (line == 6) {
+        if (!zone[4].classList.contains('clicked')) {
+            return zone[4];
+        } else if (!zone[7].classList.contains('clicked')) {
+            return zone[7];
+        } else if (!zone[1].classList.contains('clicked')) {
+            return zone[1];
+        }
+    }
+    if (line == 7) {
+        if (!zone[8].classList.contains('clicked')) {
+            return zone[8];
+        } else if (!zone[2].classList.contains('clicked')) {
+            return zone[2];
+        } else if (!zone[5].classList.contains('clicked')) {
+            return zone[5];
+        }
+    }
 }
 
 reset();
@@ -47,18 +199,21 @@ function initialize() {
 
 }
 
-function play() { 
+function play() {
     for (let i = 0; i < zone.length; i++) {
         zone[i].addEventListener('click', function() {
             if (!this.classList.contains('clicked')) {
                 this.classList.add('clicked');
-                moves.push(cell(parseInt(this.dataset.order)));
-                step = tictactoe(moves, this);        
-                //this.classList.add(step[0]);
+                moves.push(parseInt(this.dataset.order));
+                step = tictactoe(moves, this);
                 if (step[1] === 'اللعبة مستمرة') {
                     if (step[0] === 'player-1') {
                         player.innerHTML = players[1];
                         player.style.color = 'coral';
+
+                        // document.body.addEventListener("click", function(evt) { evt.preventDefault()});
+                        setTimeout(function() {zoneToClick(lineToClick()).click()}, 500);                        
+
                     } else {
                         player.innerHTML = players[0];
                         player.style.color = 'cornflowerblue';
@@ -75,8 +230,6 @@ function play() {
                             points[1]++;
                             score2.innerHTML = points[1];
                         }
-                        console.log(players[0], ' : ', points[0]);
-                        console.log(players[1], ' : ', points[1]);
                     } else {
                         msg.innerHTML = step[1];
                     }
@@ -87,9 +240,9 @@ function play() {
     }
     warning.innerText = ''
     inputs[0].value = '';      
-    inputs[1].value = '';
+    //inputs[1].value = '';
     inputs[0].style.borderColor = 'gray';
-    inputs[1].style.borderColor = 'gray';
+    //inputs[1].style.borderColor = 'gray';
     inputs[0].focus();
 }
 
@@ -97,33 +250,34 @@ function playStart() {
     if (inputs[0].value.trim() !== inputs[0].value) {
         inputs[0].value = inputs[0].value.trim();
     }
-    if (inputs[1].value.trim() !== inputs[1].value) {
-        inputs[1].value = inputs[1].value.trim();
-    }
+    // if (inputs[1].value.trim() !== inputs[1].value) {
+    //     inputs[1].value = inputs[1].value.trim();
+    // }
     if (inputs[0].value === '') {
-        warning.innerHTML = '! أدخل اسم <span>اللاعب الأول</span>';
+        warning.innerHTML = '<span>! أدخل اسمك </span>';
         inputs[0].value = '';
         inputs[0].focus();
         inputs[0].style.borderColor = 'orangered';
-        inputs[1].style.borderColor = 'gray';
-    } else if (inputs[1].value === '') {
-        warning.innerHTML = '! أدخل اسم <span>اللاعب الثاني</span>';
-        inputs[1].value = ''; 
-        inputs[1].focus();
-        inputs[1].style.borderColor = 'orangered';
-        inputs[0].style.borderColor = 'gray';
-    } else if (inputs[0].value.trim() === inputs[1].value.trim()) {
-        warning.innerHTML = '! اللاعبان لديهما <span>نفس الإسم</span>';
-        inputs[0].value = inputs[0].value.trim()     
-        inputs[1].value = inputs[1].value.trim()     
-        inputs[0].focus();
-        inputs[0].style.borderColor = 'orangered';
-        inputs[1].style.borderColor = 'orangered';
+        //inputs[1].style.borderColor = 'gray';
+    // } else if (inputs[1].value === '') {
+    //     warning.innerHTML = '! أدخل اسم <span>اللاعب الثاني</span>';
+    //     inputs[1].value = ''; 
+    //     inputs[1].focus();
+    //     inputs[1].style.borderColor = 'orangered';
+    //     inputs[0].style.borderColor = 'gray';
+    // } else if (inputs[0].value.trim() === inputs[1].value.trim()) {
+    //     warning.innerHTML = '! اللاعبان لديهما <span>نفس الإسم</span>';
+    //     inputs[0].value = inputs[0].value.trim()     
+    //     inputs[1].value = inputs[1].value.trim()     
+    //     inputs[1].focus();
+    //     inputs[0].style.borderColor = 'orangered';
+    //     inputs[1].style.borderColor = 'orangered';
+    //
     } else {
         players.push(inputs[0].value);
-        players.push(inputs[1].value);
+        players.push('الروبوت');
         name1.innerHTML = inputs[0].value;
-        name2.innerHTML = inputs[1].value;
+        name2.innerHTML = 'الروبوت';
         initialize();
         begin.style.display = 'none';
         play();
@@ -178,9 +332,11 @@ let board = [['', '', ''], ['', '', ''], ['', '', '']];
 var tictactoe = function(moves, currentElement) {    
     currentElement.classList.add(getplayer(moves.length-1));
     let player;
+    //get the coordinates of each zone
+    let axes = moves.map(ele => cell(ele));
     for(let index = 0; index < moves.length; index++) {
         player = getplayer(index);               
-        playMove(player, moves[index]);
+        playMove(player, axes[index]);
         if (isWinByRow() || isWinByColumn() || isWinByDiagonal()) {
             return [player, 'يربح'];
         }
@@ -196,8 +352,8 @@ var getplayer = function(moveIndex) {
     return moveIndex % 2 === 0 ? 'player-1' : 'player-2';
 }
 
-var playMove = function (player, move) {
-    player === 'player-2' ? board[move[0]][move[1]] = 'X' : board[move[0]][move[1]] = 'O';
+var playMove = function (player, move) {    
+    player === 'player-1' ? board[move[0]][move[1]] = 'X' : board[move[0]][move[1]] = 'O';
 }
 
 var isWinByRow = function() {
@@ -239,10 +395,11 @@ var isWinByColumn = function() {
 }
 
 var isWinByDiagonal = function() {
-    let currentdiagonal = board[0][0] + board[1][1] + board[2][2];
-    if (isWinCombination(currentdiagonal)) {
+    let currenDiagonal;
+    currenDiagonal = board[0][0] + board[1][1] + board[2][2];
+    if (isWinCombination(currenDiagonal)) {
         for (let i = 0; i < zone.length; i++) {
-            if ( cell(parseInt(zone[i].dataset.order))[0] == cell(parseInt(zone[i].dataset.order))[1]) {
+            if (cell(parseInt(zone[i].dataset.order))[0] == cell(parseInt(zone[i].dataset.order))[1]) {
                 if (zone[i].classList.contains('player-1')) {
                     zone[i].classList.add('winner-1'); 
                 } else if (zone[i].classList.contains('player-2')) {
@@ -252,8 +409,8 @@ var isWinByDiagonal = function() {
         }
         return true;
     }
-    currentdiagonal = board[0][2] + board[1][1] + board[2][0];
-    if (isWinCombination(currentdiagonal)) {
+    currenDiagonal = board[0][2] + board[1][1] + board[2][0];
+    if (isWinCombination(currenDiagonal)) {
         for (let i = 0; i < zone.length; i++) {
             if (cell(parseInt(zone[i].dataset.order))[0] + cell(parseInt(zone[i].dataset.order))[1] == 2) {
                 if (zone[i].classList.contains('player-1')) {
