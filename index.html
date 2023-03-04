@@ -14,8 +14,26 @@
                 <input type="text" placeholder="أدخل اسمك">
                 <!--<input type="text" placeholder="اللاعب الثاني">-->
             </div>
-            <div id="warning"></div>
+            <div class="level" dir="rtl">
+                <p>اختر مستوى اللعب :</p>
+                <input type="radio" name="level" id="easy">
+                <label for="easy">سهل</label>
+                <input type="radio" name="level" id="medium">
+                <label for="medium">متوسط</label>
+                <input type="radio" name="level" id="hard">
+                <label for="hard">صعب</label>
+            </div>            
             <button id="start">ابدأ اللعبة</button>
+        </div>
+        <div class="score">
+            <div class="names">
+                <span id="name-1" style="font-size: 18px;"></span>
+                <span id="name-2" style="font-size: 18px;"></span>
+            </div>
+            <div class="scores">
+                <span id="score-1">0</span>
+                <span id="score-2">0</span>
+            </div>
         </div>
         <span id="player"></span>
         <div class="row">
@@ -33,21 +51,10 @@
             <div class="zone" data-order ="7"></div>
             <div class="zone" data-order ="8"></div>
         </div>
-        <h3 id="msg"></h3>
         <div class="end">
-            <button id="replay">متابعة المنافسة</button>
-            <button id="restart">إنهاء المنافسة</button>
-        </div>
-        <div class="score">
-            <div class="names">
-                <span id="name-1"></span>
-                <span id="name-2"></span>
-            </div>
-            <div class="scores">
-                <span id="score-1">0</span>
-                <span id="score-2">0</span>
-            </div>
-        </div>
+            <button id="replay">متابعة</button>
+            <button id="restart">إنهاء</button>
+        </div>       
     </div>
     <!--<script src="algo.js"></script>-->
     <script src="script.js"></script>
